@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>starop - ساخت کانفیگ WireGuard</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #00ffcc;
+      font-family: Tahoma, sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #222222;
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #444;
+    }
+    h1 {
+      color: #00ffcc;
+      text-align: center;
+    }
+    input, select, button {
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #555;
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #28a745;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>ساخت کانفیگ WireGuard - starop</h1>
+
+  <form id="configForm">
+    <label for="validity">Validity (Days):</label>
+    <input type="number" id="validity" name="validity" required>
+
+    <label for="dataLimit">Data Limit (GB):</label>
+    <input type="number" id="dataLimit" name="dataLimit" required>
+
+    <label for="users">Users:</label>
+    <input type="number" id="users" name="users" required>
+
+    <label for="country">Country:</label>
+    <select id="country" name="country" required>
+      <option value="Germany">آلمان</option>
+      <option value="USA">آمریکا</option>
+      <option value="UK">انگلیس</option>
+      <option value="France">فرانسه</option>
+      <!-- افزودن دیگر کشورها -->
+    </select>
+
+    <label for="game">Game:</label>
+    <select id="game" name="game" required>
+      <option value="PUBG">پابجی</option>
+      <option value="CoD">کالاف</option>
+      <option value="FreeFire">فری فایر</option>
+      <!-- افزودن بازی‌های دیگر -->
+    </select>
+
+    <label for="internet">Internet Type:</label>
+    <select id="internet" name="internet" required>
+      <option value="Irancell">ایرانسل</option>
+      <option value="Rightel">رایتل</option>
+      <option value="Hamrah">همراه اول</option>
+      <option value="WiFi">وای فای</option>
+    </select>
+
+    <button type="submit">ساخت کانفیگ</button>
+  </form>
+  
+  <p id="generatedConfig" style="color: #fff; display: none;"></p>
+</div>
+
+<script>
+  document.getElementById('configForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const validity = document.getElementById('validity').value;
+    const dataLimit = document.getElementById('dataLimit').value;
+    const users = document.getElementById('users').value;
+    const country = document.getElementById('country').value;
+    const game = document.getElementById('game').value;
+    const internet = document.getElementById('internet').value;
+
+    const dns = ['78.157.47.101', '185.255.46.88'];  // DNS ها
+    const ipv6Dns = ['0000:f0e0:c7:8b::1', '0000:b68f:48:ea::1'];  // DNS های نسل ۶
+
+    const randomAllowedIps = ['185.255.46.88', '185.255.46.30', '185.255.46.51']; // رندوم نسل ۴ و ۲ نسل ۶
+
+    const config = `
+[Interface]
+PrivateKey = Dgx5EoLOvLKk1q9hp9JTy92iB5rBli04cJpcV1TkC08=
+Address = 10.202.10.10/24
+DNS = ${dns.join(', ')}
+
+[Peer]
+PublicKey = DvyUcpUjpTWNNIaODTSKYHkLg52p2IuYDp3gKoSbcRI=
+Endpoint = 97.5.137.139:1139
+AllowedIPs = ${randomAllowedIps.join(', ')}, ${ipv6Dns.join(', ')}
+PersistentKeepalive = 25
+    `;
+    
+    document.getElementById('generatedConfig').style.display = 'block';
+    document.getElementById('generatedConfig').innerText = config;
+  });
+
+  function generateRandomKey() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let key = '';
+    for (let i = 0; i < 44; i++) {
+      key += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return key + "=";
+  }
+</script>
+
+</body>
+</html>
